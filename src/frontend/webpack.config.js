@@ -29,7 +29,7 @@ module.exports = {
                 exclude: /node_modules/
             },
             {
-                test: /\.(png|jpg|gif|svg)$/,
+                test: /\.(png|jpg|gif|svg|woff|woff2|eot|ttf)$/,
                 loader: 'file-loader',
                 options: {
                     name: '[name].[ext]?[hash]'
@@ -46,7 +46,15 @@ module.exports = {
     devServer: {
         historyApiFallback: true,
         noInfo: true,
-        overlay: true
+        overlay: true,
+        proxy: {
+            '/api/*': {
+                target: 'http://localhost:5000',
+                changeOrigin: true,
+                secure: false
+            }
+        }
+        
     },
     performance: {
         hints: false

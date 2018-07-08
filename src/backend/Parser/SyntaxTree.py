@@ -2,9 +2,9 @@ import os
 import os.path
 
 from antlr4 import *
-from JavaLexer import JavaLexer
-from JavaParser import JavaParser
-from ProjectVisitor import ProjectVisitor
+from Parser.JavaLexer import JavaLexer
+from Parser.JavaParser import JavaParser
+from Parser.ProjectVisitor import ProjectVisitor
 from SyntaxNodes.SyntaxNode import SyntaxNode
 
 def __parseFile(filePath, syntaxTree, splitPackage, encoding):

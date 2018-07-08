@@ -1,5 +1,5 @@
 from antlr4 import *
-from JavaParserVisitor import JavaParserVisitor
+from Parser.JavaParserVisitor import JavaParserVisitor
 from SyntaxNodes.SyntaxNode import SyntaxNode
 from SyntaxNodes.MethodSyntaxNode import MethodSyntaxNode
 from SyntaxNodes.FieldSyntaxNode import FieldSyntaxNode

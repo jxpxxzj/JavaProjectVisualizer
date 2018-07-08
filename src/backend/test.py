@@ -2,10 +2,12 @@ import sys
 import os.path
 
 import json
-from SyntaxTree import GetProjectSyntaxTree
-from NodeEncoder import NodeEncoder
-from ZipUtils import UnzipFile
-from FileTree import GetFileTree
+from Parser.SyntaxTree import GetProjectSyntaxTree
+from Utils.NodeEncoder import NodeEncoder
+from Utils.ZipUtils import UnzipFile
+from FileNodes.FileTree import GetFileTree
+
+from Server.App import CreateApp
 
 def srcTree(argv):
     sourceTree = GetProjectSyntaxTree(argv[1])
@@ -16,7 +18,7 @@ def srcTree(argv):
 
 def fileTree(argv):
     fileTree = GetFileTree(argv[1])
-    strs = json.dumps(tree, sort_keys=True, cls=NodeEncoder)
+    strs = json.dumps(fileTree, sort_keys=True, cls=NodeEncoder)
     # with open('fileTree.json', 'w') as f:
     #    f.write(strs)
     print(strs)
@@ -24,8 +26,13 @@ def fileTree(argv):
 def testUnzip(argv):
     UnzipFile(argv[1])
 
+def testFlask(argv):
+    app = CreateApp()
+    app.run(host='0.0.0.0', port=5000)
+
 if __name__ == '__main__':
     sys.path.append(os.path.dirname(sys.path[0]))
-    srcTree(sys.argv)
+    # srcTree(sys.argv)
+    testFlask(sys.argv)
     # fileTree(sys.argv)
     # testUnzip(sys.argv)

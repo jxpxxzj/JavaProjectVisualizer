@@ -1,10 +1,10 @@
 import os
 import os.path
 
-from FileNode import FileNode
+from FileNodes.FileNode import FileNode
 
 def GetFileTree(directory, rootName='/'):
-    treeRoot = FileNode(rootName, isFolder=True)
+    treeRoot = FileNode(rootName, isFolder=True, expand=True)
 
     def travelFolder(treeRoot, directory):
         files = os.listdir(directory)
@@ -16,7 +16,9 @@ def GetFileTree(directory, rootName='/'):
                 treeRoot.append(newNode)
                 travelFolder(newNode, path)
             else:
-                newNode = FileNode(lists, isFolder=False)
+                pathList = os.path.normpath(path).replace('\\', '/').split('/')[2:]
+                dpath = '/'.join(pathList)
+                newNode = FileNode(lists, isFolder=False, path=dpath)
                 treeRoot.append(newNode)
 
     travelFolder(treeRoot, directory)
