@@ -8,10 +8,18 @@
         </Row>
         <Row>
             <Tabs value="glob" style="height: 100%">
-                <TabPane label="概览" name="glob">
-                    标签一的内容
+                <TabPane label="Overview" name="glob">
+                    <Tabs value="tree" style="height: 100%">
+                        <TabPane label="Package and Class Tree" name="tree">
+                            <chart :options="tree" style="width: 100%; height: 600px"></chart>
+                        </TabPane>
+                        <TabPane label="Line of codes" name="treeMap">
+                            <chart :options="treeMap" style="width: 100%; height: 600px"></chart>
+                        </TabPane>
+                    </Tabs>
+                    
                 </TabPane>
-                <TabPane label="浏览" name="file">
+                <TabPane label="Source code browser" name="file">
                     <Row :gutter="20">
                         <iCol :span="6">
                             <Tree :data="fileTree" @on-select-change="onTreeSelectChange"></Tree>
@@ -66,16 +74,150 @@ td.hljs-ln-code {
 
 </style>
 <script>
+
+function colorMappingChange(value) {
+    var levelOption = getLevelOption(value);
+    chart.setOption({
+        series: [{
+            levels: levelOption
+        }]
+    });
+}
+
+// var formatUtil = echarts.format;
+
+function getLevelOption() {
+    return [
+        {
+            itemStyle: {
+                normal: {
+                    borderColor: '#777',
+                    borderWidth: 0,
+                    gapWidth: 1
+                }
+            },
+            upperLabel: {
+                normal: {
+                    show: false
+                }
+            }
+        },
+        {
+            itemStyle: {
+                normal: {
+                    borderColor: '#555',
+                    borderWidth: 5,
+                    gapWidth: 1
+                },
+                emphasis: {
+                    borderColor: '#ddd'
+                }
+            }
+        },
+        {
+            colorSaturation: [0.35, 0.5],
+            itemStyle: {
+                normal: {
+                    borderWidth: 5,
+                    gapWidth: 1,
+                    borderColorSaturation: 0.6
+                }
+            }
+        }
+    ];
+}
+
 export default {
     name: 'app',
     data () {
         return {
+            syntaxTree: {
+                children: []
+            },
+            tree: {
+                tooltip: {
+                    trigger: 'item',
+                    triggerOn: 'mousemove'
+                },
+                series: [
+                    {
+                        type: 'tree',
+                        data: [],
+                        top: '1%',
+                        left: '7%',
+                        bottom: '1%',
+                        right: '20%',
+                        symbolSize: 7,
+                        label: {
+                            normal: {
+                                position: 'left',
+                                verticalAlign: 'middle',
+                                align: 'right',
+                                fontSize: 9
+                            }
+                        },
+                        leaves: {
+                            label: {
+                                normal: {
+                                    position: 'right',
+                                    verticalAlign: 'middle',
+                                    align: 'left'
+                                }
+                            }
+                        },
+                        expandAndCollapse: true,
+                        animationDuration: 550,
+                        animationDurationUpdate: 750
+                    }
+                ]
+            },
+            treeMap: {
+                tooltip: {
+                    formatter: function (info) {
+                        var value = info.value;
+                        var treePathInfo = info.treePathInfo;
+                        var treePath = [];  
+                        for (var i = 1; i < treePathInfo.length; i++) {
+                            treePath.push(treePathInfo[i].name);
+                        }   
+                        return [
+                            '<div class="tooltip-title">' + treePath.join('/') + '</div>',
+                            'Line of codes: ' + value,
+                        ].join('');
+                    }
+                },
+                series: [
+                    {
+                        name:'Porject Overview',
+                        type:'treemap',
+                        visibleMin: 500,
+                        zoomToNodeRatio: 0.36,
+                        label: {
+                            show: true,
+                            formatter: '{b}'
+                        },
+                        upperLabel: {
+                            normal: {
+                                show: true,
+                                height: 30
+                            }
+                        },
+                        itemStyle: {
+                            normal: {
+                                borderColor: '#fff'
+                            }
+                        },
+                        levels: getLevelOption(),
+                        data: []
+                    }
+                ]  
+            },
             memberSelected: '',
             fileSourceTree: {
                 members: ['get', 'set']
             },
             code: '',
-            fileKey: '',
+            fileKey: null,
             fileTree: []
         }
     },
@@ -85,7 +227,10 @@ export default {
         },
         onUploadSuccess(response, file, fileList) {
             this.fileKey = response.fileKey;
-            this.fileTree = [response.tree];
+            this.fileTree = [response.fileTree];
+            this.syntaxTree = response.syntaxTree
+            this.treeMap.series[0].data = this.syntaxTree.children
+            this.tree.series[0].data = [this.syntaxTree]
             console.log(response, file, fileList);
         },
         onTreeSelectChange(item) {

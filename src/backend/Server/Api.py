@@ -6,6 +6,7 @@ from werkzeug import secure_filename
 from flask import Blueprint, request, send_file, jsonify
 from Utils.ZipUtils import UnzipFile
 from FileNodes.FileTree import GetFileTree
+from Parser.SyntaxTree import GetProjectSyntaxTree
 
 apiBp = Blueprint('api', __name__, url_prefix="/api")
 
@@ -23,17 +24,19 @@ def upload():
         
         fileKey, path = UnzipFile(temp_filename)
         fileKey = str(fileKey)
-        tree = GetFileTree(path, fileKey)
+        fileTree = GetFileTree(path, fileKey)
+        syntaxTree = GetProjectSyntaxTree(path, False)
 
     return jsonify({
         'fileKey': fileKey,
-        'tree': tree
+        'fileTree': fileTree,
+        'syntaxTree': syntaxTree
     })
 
 @apiBp.route('/getFile/<fileKey>/<path:filePath>')
 def getFile(fileKey, filePath):
     path = os.path.normpath(os.path.join(os.getcwd(), './upload/' + fileKey + '/' + filePath))
-    with open(path, 'r') as f:
+    with open(path, 'r', encoding='utf8') as f:
         content = f.read()
     
     return jsonify({
