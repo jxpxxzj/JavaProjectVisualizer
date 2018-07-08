@@ -5,7 +5,7 @@ from antlr4 import *
 from JavaLexer import JavaLexer
 from JavaParser import JavaParser
 from ProjectVisitor import ProjectVisitor
-from SyntaxNode import SyntaxNode
+from SyntaxNodes.SyntaxNode import SyntaxNode
 
 def __parseFile(filePath, syntaxTree, splitPackage, encoding):
     input = FileStream(filePath, encoding)

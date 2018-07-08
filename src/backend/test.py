@@ -9,16 +9,16 @@ from FileTree import GetFileTree
 
 def srcTree(argv):
     sourceTree = GetProjectSyntaxTree(argv[1])
-    strs = json.dumps(sourceTree, sort_keys=True, cls=NodeEncoder, indent=4)
+    strs = json.dumps(sourceTree, sort_keys=True, cls=NodeEncoder)
     with open('srcTree.json', 'w') as f:
-        f.write(strs)
-    print(strs)
+       f.write(strs)
+    # print(strs)
 
 def fileTree(argv):
     fileTree = GetFileTree(argv[1])
     strs = json.dumps(tree, sort_keys=True, cls=NodeEncoder)
-    with open('srcTree.json', 'w') as f:
-        f.write(strs)
+    # with open('fileTree.json', 'w') as f:
+    #    f.write(strs)
     print(strs)
 
 def testUnzip(argv):

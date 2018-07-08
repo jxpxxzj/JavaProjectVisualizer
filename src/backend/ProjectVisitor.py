@@ -1,6 +1,9 @@
 from antlr4 import *
 from JavaParserVisitor import JavaParserVisitor
-from SyntaxNode import SyntaxNode
+from SyntaxNodes.SyntaxNode import SyntaxNode
+from SyntaxNodes.MethodSyntaxNode import MethodSyntaxNode
+from SyntaxNodes.FieldSyntaxNode import FieldSyntaxNode
+from SyntaxNodes.AnnotationTypeElementSyntaxNode import AnnotationTypeElementSyntaxNode
 
 class ProjectVisitor(JavaParserVisitor):
     def __init__(self, syntaxTree, splitPackage):
@@ -31,7 +34,7 @@ class ProjectVisitor(JavaParserVisitor):
             if not packageTree[0] in subTree:
                 subTree.append(SyntaxNode(packageTree[0], nodeType='Package'))
             self.insertPackage(subTree[packageTree[0]], packageTree[1:])
-        
+    
     def getPackage(self, subTree, packageTree):
         if len(packageTree) == 1:
             return subTree[packageTree[0]]
@@ -39,32 +42,47 @@ class ProjectVisitor(JavaParserVisitor):
             if packageTree[0] in subTree:
                 return self.getPackage(subTree[packageTree[0]], packageTree[1:])
             else:
-                return None
+                return None    
     
     def visitMethodDeclaration(self, ctx):
-        start, stop = self.getLineNumber(ctx)
-        print('Method: {0} [{1} ~ {2}]'.format(ctx.IDENTIFIER(), start, stop))
+        print('Method: {0}'.format(ctx.IDENTIFIER()))
 
         self.getPackage(self.syntaxTree, self.packageTree)[self.className].append(
-            SyntaxNode(ctx.IDENTIFIER().getText(), nodeType='Method', start=start, stop=stop))
+            MethodSyntaxNode(ctx))
         
         return super().visitMethodDeclaration(ctx)
     
-    def visitInterfaceMethodDeclaration(self, ctx):
-        start, stop = self.getLineNumber(ctx)
-        print('InterfaceMethod: {0} [{1} ~ {2}]'.format(ctx.IDENTIFIER(), start, stop))
+    def visitFieldDeclaration(self, ctx):
+        fieldName = ctx.variableDeclarators().variableDeclarator(0).variableDeclaratorId().IDENTIFIER().getText()
+        print('Field: {0}'.format(fieldName))
         
         self.getPackage(self.syntaxTree, self.packageTree)[self.className].append(
-            SyntaxNode(ctx.IDENTIFIER().getText(), nodeType='InterfaceMethod', start=start, stop=stop))
+            FieldSyntaxNode(ctx))
+        
+        return super().visitFieldDeclaration(ctx)
+
+    def visitAnnotationTypeElementDeclaration(self, ctx):
+        elementName = ctx.annotationTypeElementRest().annotationMethodOrConstantRest().annotationMethodRest().IDENTIFIER().getText()
+        print('AnnotationTypeElement: {0}'.format(elementName))
+        
+        self.getPackage(self.syntaxTree, self.packageTree)[self.className].append(
+            AnnotationTypeElementSyntaxNode(ctx))
+
+        return super().visitAnnotationTypeElementDeclaration(ctx)
+    
+    def visitInterfaceMethodDeclaration(self, ctx):
+        print('InterfaceMethod: {0}'.format(ctx.IDENTIFIER()))
+        
+        self.getPackage(self.syntaxTree, self.packageTree)[self.className].append(
+            MethodSyntaxNode(ctx, nodeType='InterfaceMethod'))
         
         return super().visitInterfaceMethodDeclaration(ctx)
 
     def visitConstructorDeclaration(self, ctx):
-        start, stop = self.getLineNumber(ctx)
-        print('Constructor: {0} [{1} ~ {2}]'.format(ctx.IDENTIFIER(), start, stop))
+        print('Constructor: {0}'.format(ctx.IDENTIFIER()))
 
         self.getPackage(self.syntaxTree, self.packageTree)[self.className].append(
-            SyntaxNode(ctx.IDENTIFIER().getText(), nodeType='Constructor', start=start, stop=stop))
+            MethodSyntaxNode(ctx, nodeType='Constructor'))
 
         return super().visitConstructorDeclaration(ctx)
     
@@ -74,7 +92,7 @@ class ProjectVisitor(JavaParserVisitor):
         print('Annotation: @{0} [{1} ~ {2}]'.format(self.className, start, stop))
 
         self.getPackage(self.syntaxTree, self.packageTree).append(
-            SyntaxNode('@' + self.className, nodeType='Annotation', start=start, stop=stop))
+            SyntaxNode(self.className, nodeType='Annotation', start=start, stop=stop))
 
         return super().visitAnnotationTypeDeclaration(ctx)
 
