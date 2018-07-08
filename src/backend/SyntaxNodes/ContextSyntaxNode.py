@@ -15,6 +15,6 @@ class ContextSyntaxNode(SyntaxNode):
             return variableType.IDENTIFIER()[0].getText()
 
     
-    def __init__(self, ctx, name, nodeType):
+    def __init__(self, ctx, name, nodeType, packageName=None, className=None):
         start, stop = self.getLineNumber(ctx)
-        super().__init__(name, nodeType, start=start, stop=stop)
+        super().__init__(name, nodeType, start=start, stop=stop, packageName=packageName, className=className)

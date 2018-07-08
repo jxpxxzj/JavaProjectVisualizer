@@ -26,7 +26,6 @@ vueHighlightJS.install = function install(Vue) {
 
                 hljs.highlightBlock(target);
                 window.hljs = hljs
-                console.log(hljs)
                 initLineNumber(window, document)
                 hljs.initLineNumbersOnLoad();
             }

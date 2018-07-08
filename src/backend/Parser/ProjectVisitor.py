@@ -48,7 +48,7 @@ class ProjectVisitor(JavaParserVisitor):
         print('Method: {0}'.format(ctx.IDENTIFIER()))
 
         self.getPackage(self.syntaxTree, self.packageTree)[self.className].append(
-            MethodSyntaxNode(ctx))
+            MethodSyntaxNode(ctx, packageName=self.packageName, className=self.className))
         
         return super().visitMethodDeclaration(ctx)
     
@@ -57,7 +57,7 @@ class ProjectVisitor(JavaParserVisitor):
         print('Field: {0}'.format(fieldName))
         
         self.getPackage(self.syntaxTree, self.packageTree)[self.className].append(
-            FieldSyntaxNode(ctx))
+            FieldSyntaxNode(ctx, packageName=self.packageName, className=self.className))
         
         return super().visitFieldDeclaration(ctx)
 
@@ -66,7 +66,7 @@ class ProjectVisitor(JavaParserVisitor):
         print('AnnotationTypeElement: {0}'.format(elementName))
         
         self.getPackage(self.syntaxTree, self.packageTree)[self.className].append(
-            AnnotationTypeElementSyntaxNode(ctx))
+            AnnotationTypeElementSyntaxNode(ctx, packageName=self.packageName, className=self.className))
 
         return super().visitAnnotationTypeElementDeclaration(ctx)
     
@@ -74,7 +74,7 @@ class ProjectVisitor(JavaParserVisitor):
         print('InterfaceMethod: {0}'.format(ctx.IDENTIFIER()))
         
         self.getPackage(self.syntaxTree, self.packageTree)[self.className].append(
-            MethodSyntaxNode(ctx, nodeType='InterfaceMethod'))
+            MethodSyntaxNode(ctx, nodeType='InterfaceMethod', packageName=self.packageName, className=self.className))
         
         return super().visitInterfaceMethodDeclaration(ctx)
 
@@ -82,7 +82,7 @@ class ProjectVisitor(JavaParserVisitor):
         print('Constructor: {0}'.format(ctx.IDENTIFIER()))
 
         self.getPackage(self.syntaxTree, self.packageTree)[self.className].append(
-            MethodSyntaxNode(ctx, nodeType='Constructor'))
+            MethodSyntaxNode(ctx, nodeType='Constructor', packageName=self.packageName, className=self.className))
 
         return super().visitConstructorDeclaration(ctx)
     
@@ -92,7 +92,7 @@ class ProjectVisitor(JavaParserVisitor):
         print('Annotation: @{0} [{1} ~ {2}]'.format(self.className, start, stop))
 
         self.getPackage(self.syntaxTree, self.packageTree).append(
-            SyntaxNode(self.className, nodeType='Annotation', start=start, stop=stop))
+            SyntaxNode(self.className, nodeType='Annotation', start=start, stop=stop, packageName=self.packageName))
 
         return super().visitAnnotationTypeDeclaration(ctx)
 
@@ -102,7 +102,7 @@ class ProjectVisitor(JavaParserVisitor):
         print('Class: {0} [{1} ~ {2}]'.format(self.className, start, stop))
 
         self.getPackage(self.syntaxTree, self.packageTree).append(
-            SyntaxNode(self.className, nodeType='Class', start=start, stop=stop))
+            SyntaxNode(self.className, nodeType='Class', start=start, stop=stop, packageName=self.packageName))
 
         return super().visitClassDeclaration(ctx)
 
@@ -112,7 +112,7 @@ class ProjectVisitor(JavaParserVisitor):
         print('Interface: {0} [{1} ~ {2}]'.format(self.className, start, stop))
 
         self.getPackage(self.syntaxTree, self.packageTree).append(
-            SyntaxNode(self.className, nodeType='Interface', start=start, stop=stop))
+            SyntaxNode(self.className, nodeType='Interface', start=start, stop=stop, packageName=self.packageName, className=self.className))
 
         return super().visitInterfaceDeclaration(ctx)
 

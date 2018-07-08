@@ -1,11 +1,17 @@
 class SyntaxNode:
-    def __init__(self, name, nodeType=None, start=0, stop=0):
+    def __init__(self, name, nodeType=None, start=0, stop=0, packageName=None, className=None):
         self.name = name
         self.children = []
         self.type = nodeType
         self.start = start
         self.stop = stop
         self.value = stop - start + 1
+
+        if not packageName is None:
+            self.packageName = packageName
+        
+        if not className is None:
+            self.className = className
     
     def setChildren(self, lst):
         self.children = lst

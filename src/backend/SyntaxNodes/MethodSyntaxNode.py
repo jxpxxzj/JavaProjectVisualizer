@@ -16,8 +16,8 @@ class MethodSyntaxNode(ContextSyntaxNode):
             return sigList
         return ''
 
-    def __init__(self, ctx, nodeType='Method'):
-        super().__init__(ctx, ctx.IDENTIFIER().getText(), nodeType)
+    def __init__(self, ctx, nodeType='Method', packageName=None, className=None):
+        super().__init__(ctx, ctx.IDENTIFIER().getText(), nodeType, packageName, className)
         if self.type != 'Constructor':
             self.returnType = ctx.typeTypeOrVoid().getText()
         self.signature = self.parseSignature(ctx.formalParameters().formalParameterList())
