@@ -46,8 +46,8 @@ function travelTree(sytnaxTree) {
         
         if (tree.type == 'Method' || tree.type == 'InterfaceMethod' || tree.type == 'AnnotationTypeElement' || tree.type == 'Constructor') {
             var params = ''
-            if (tree.signature)
-                var params = tree.signature.join(', ')
+            if (tree.parameters)
+                var params = tree.parameters.join(', ')
                 elem.params = params
             if (tree.type != 'Constructor') {
                 str = `${tree.returnType} ${str}(${params})`

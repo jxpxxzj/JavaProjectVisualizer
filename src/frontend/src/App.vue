@@ -231,9 +231,6 @@ var colsC = [
         title: 'Qualified Scope',
         key: 'qualifiedScope'
     }, {
-        title: 'Name',
-        key: 'name'
-    }, {
         title: 'Parameter List',
         key: 'params',
         render: paramsRender
@@ -322,7 +319,7 @@ export default {
                 },
                 series: [
                     {
-                        name:'Porject Overview',
+                        name:'Line of codes',
                         type:'treemap',
                         visibleMin: 500,
                         zoomToNodeRatio: 0.36,
