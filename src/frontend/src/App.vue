@@ -88,7 +88,14 @@
                                     </iCol>
                                     <iCol :span="12">
                                         <div style="margin-top: 12px;">
-                                            Graph
+                                            <Tabs>
+                                                <TabPane label="Control Flow Graph">
+                                                    Graph
+                                                </TabPane>
+                                                <TabPane label="Metrics Value">
+                                                    <Table border :columns="sourceBrowserTableCols" :data="sourceBrowserTableValue"></Table>
+                                                </TabPane>
+                                            </Tabs>
                                         </div>
                                     </iCol>
                                 </div>
@@ -244,6 +251,17 @@ var colsP = [
     }
 ]
 
+var colMV = [
+    {
+        title: 'Key',
+        key: 'key'
+    },
+    {
+        title: 'Value',
+        key: 'value'
+    }
+]
+
 export default {
     name: 'app',
     data () {
@@ -261,6 +279,8 @@ export default {
                 annotation: colsIorCorA,
                 annotationTypeElement: colsMorIMorATE
             },
+            sourceBrowserTableCols: colMV,
+            sourceBrowserTableValue: [],
             activeMenu: '1',
             syntaxTree: {
                 children: []
@@ -381,7 +401,7 @@ export default {
                 const result = this.$axios.get('/api/getFile/' + this.fileKey + '/' + item[0].path)
                 .then(response => {
                     this.browserSpinShow = false;
-                    // console.log(response)
+                    console.log(response)
                     this.code = response.data.content
                 });
             } else {

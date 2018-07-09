@@ -17,7 +17,6 @@ class StatementSyntaxNode(ContextSyntaxNode):
         if len(ctx.expression()) == 2 and ctx.bop.text in ['=', '+=', '-=', '*=', '/=', '&=', '|=', '^=', '>>=', '>>>=', '<<=', '%=']: # assign statement            
             return self.__parseAssign(ctx)
 
-
     def __parseStatement(self, ctx):
         statement = None
 
@@ -30,8 +29,9 @@ class StatementSyntaxNode(ContextSyntaxNode):
         if hasattr(ctx, 'statementExpression') and ctx.statementExpression != None: # is expression
             return [self.__parseExpression(ctx.statementExpression)] # returns as a list
         
-        if hasattr(ctx, 'RETURN') and ctx.RETURN() != None: # is return        
-            return [self.__parseExpression(ctx.expression(0), 'ReturnStatement')]
+        if hasattr(ctx, 'RETURN') and ctx.RETURN() != None: # is return      
+            from SyntaxNodes.ReturnStatementSyntaxNode import ReturnStatementSyntaxNode
+            return [ReturnStatementSyntaxNode(ctx, packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)]
 
         if hasattr(ctx, 'IF') and ctx.IF() != None: # is if statement
             from SyntaxNodes.IfStatementSyntaxNode import IfStatementSyntaxNode

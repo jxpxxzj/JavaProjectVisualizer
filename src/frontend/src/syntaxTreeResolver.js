@@ -69,6 +69,10 @@ function travelTree(sytnaxTree) {
     return obj
 }
 
+function travelFileSyntaxTree(syntaxTree) {
+
+}
+
 export {
     travelTree
 }
