@@ -75,7 +75,7 @@
                             <Row>
                                 <Select v-model="memberSelected" @on-change="onSelectChange">
                                     <Option value="sourceCode">Source Code</Option>
-                                    <Option v-for="(item,index) in fileSourceTree.members" :value="item" :key="index">{{ item }}</Option>
+                                    <Option v-for="(item,index) in fileSyntaxTree.Method" :value="item.signature" :key="index">{{ item.signature }}</Option>
                                 </Select>
                             </Row>
                             <Row :gutter="20">
@@ -137,7 +137,7 @@ td.hljs-ln-code {
 
 </style>
 <script>
-import { travelTree } from './syntaxTreeResolver'
+import { travelTree, calcCodeMetricsValue } from './syntaxTreeResolver'
 
 function colorMappingChange(value) {
     var levelOption = getLevelOption(value);
@@ -364,10 +364,11 @@ export default {
                 ]  
             },
             memberSelected: 'sourceCode',
-            fileSourceTree: {
-                members: ['get', 'set']
+            fileSyntaxTree: {
+                Method: []
             },
             code: '',
+            fullCode: '',
             fileKey: null,
             fileTree: []
         }
@@ -381,6 +382,26 @@ export default {
             this.activeMenu = name
         },
         onSelectChange(value) {
+            console.log(value)
+            if (value == 'sourceCode') {
+                this.code = this.fullCode;
+            } else {
+                var currentMethod = this.fileSyntaxTree.Method.find(t => t.signature == value);
+                var codeList = this.fullCode.split('\n').slice(currentMethod.start-1, currentMethod.stop)
+                var mIndent = codeList[0].length - codeList[0].trimLeft().length
+                var finalCode = codeList.map(t => t.slice(mIndent)).join('\n')
+
+                var metricsValue = calcCodeMetricsValue(currentMethod.methodBody);
+                
+                this.sourceBrowserTableValue = [
+                    {
+                        'key': "McCabe's Cyclomatic Complexity",
+                        'value': metricsValue.cyclomaticComplexity
+                    }
+                ]
+                
+                this.code = finalCode;
+            }
             hljs.initLineNumbersOnLoad();
         },
         onUploadSuccess(response, file, fileList) {
@@ -401,8 +422,11 @@ export default {
                 const result = this.$axios.get('/api/getFile/' + this.fileKey + '/' + item[0].path)
                 .then(response => {
                     this.browserSpinShow = false;
-                    console.log(response)
-                    this.code = response.data.content
+                    this.fileSyntaxTree = travelTree(response.data.syntaxTree)
+                    console.log(this.fileSyntaxTree)
+                    this.fullCode = response.data.content
+                    this.memberSelected = 'sourceCode';
+                    this.onSelectChange(this.memberSelected);
                 });
             } else {
                 item[0].expand = !item[0].expand
