@@ -15,8 +15,8 @@ class IfStatementSyntaxNode(StatementSyntaxNode):
         super().__init__(ctx, nodeType="IfStatement", 
             packageName=packageName, className=className, methodSignature=methodSignature, parseSelf=False)
             
-        self.name, trueBranch, falseBranch = self.__parseIf(ctx)
-        self.condition = self.name
+        self.condition, trueBranch, falseBranch = self.__parseIf(ctx)
+        self.name = self.condition
         self.children = [trueBranch]
         if falseBranch != None:
             self.children += [falseBranch]

@@ -12,5 +12,5 @@ class DoWhileStatementSyntaxNode(StatementSyntaxNode):
         super().__init__(ctx, nodeType='DoWhileStatement', 
             packageName=packageName, className=className, methodSignature=methodSignature, parseSelf=False)
         
-        self.name, self.children = self.__parseDoWhile(ctx)
-        self.condition = self.name
+        self.condition, self.children = self.__parseDoWhile(ctx)
+        self.name = self.condition

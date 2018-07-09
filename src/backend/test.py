@@ -39,7 +39,7 @@ def testFlask(argv):
 if __name__ == '__main__':
     sys.path.append(os.path.dirname(sys.path[0]))
     # srcTree(sys.argv)
-    # fileSrcTree(sys.argv)
-    testFlask(sys.argv)
+    fileSrcTree(sys.argv)
+    # testFlask(sys.argv)
     # fileTree(sys.argv)
     # testUnzip(sys.argv)

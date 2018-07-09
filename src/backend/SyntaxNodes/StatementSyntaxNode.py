@@ -45,6 +45,10 @@ class StatementSyntaxNode(ContextSyntaxNode):
             from SyntaxNodes.WhileStatementSyntaxNode import WhileStatementSyntaxNode
             return [WhileStatementSyntaxNode(ctx, packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)]
 
+        if hasattr(ctx, 'FOR') and ctx.FOR() != None: # for statement
+            from SyntaxNodes.ForStatementSyntaxNode import ForStatementSyntaxNode
+            return [ForStatementSyntaxNode(ctx, packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)]
+
     def __parseBlock(self, ctx):
         statementList = []
         blockStatements = []
