@@ -12,7 +12,9 @@ class IfStatementSyntaxNode(StatementSyntaxNode):
         return condition, trueBranch, falseBranch
 
     def __init__(self, ctx, packageName=None, className=None, methodSignature=None):
-        super().__init__(ctx, nodeType="IfStatement", packageName=packageName, className=className, methodSignature=methodSignature, parseSelf=False)
+        super().__init__(ctx, nodeType="IfStatement", 
+            packageName=packageName, className=className, methodSignature=methodSignature, parseSelf=False)
+            
         self.name, trueBranch, falseBranch = self.__parseIf(ctx)
         self.condition = self.name
         self.children = [trueBranch, falseBranch]

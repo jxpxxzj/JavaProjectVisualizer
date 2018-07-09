@@ -22,25 +22,30 @@ class StatementSyntaxNode(ContextSyntaxNode):
         statement = None
 
         if hasattr(ctx, 'blockStatement'):
-            statement = self.__parseBlock(ctx)
+            return self.__parseBlock(ctx)
 
         if hasattr(ctx, 'blockLabel') and ctx.blockLabel != None: # is block
-            statement = self.__parseBlock(ctx.blockLabel)
+            return self.__parseBlock(ctx.blockLabel)
 
         if hasattr(ctx, 'statementExpression') and ctx.statementExpression != None: # is expression
-            statement = [self.__parseExpression(ctx.statementExpression)] # returns as a list
+            return [self.__parseExpression(ctx.statementExpression)] # returns as a list
         
         if hasattr(ctx, 'RETURN') and ctx.RETURN() != None: # is return        
-            statement = [self.__parseExpression(ctx.expression(0), 'ReturnStatement')]
+            return [self.__parseExpression(ctx.expression(0), 'ReturnStatement')]
 
         if hasattr(ctx, 'IF') and ctx.IF() != None: # is if statement
             from SyntaxNodes.IfStatementSyntaxNode import IfStatementSyntaxNode
-            statement = [IfStatementSyntaxNode(ctx, packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)]
-        
-        return statement
+            return [IfStatementSyntaxNode(ctx, packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)]
+
+        if hasattr(ctx, 'DO') and ctx.DO() != None: # do..while statement
+            from SyntaxNodes.DoWhileStatementSyntaxNode import DoWhileStatementSyntaxNode
+            return [DoWhileStatementSyntaxNode(ctx, packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)]
+
+        if hasattr(ctx, 'WHILE') and ctx.WHILE() != None: # while statement
+            from SyntaxNodes.WhileStatementSyntaxNode import WhileStatementSyntaxNode
+            return [WhileStatementSyntaxNode(ctx, packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)]
 
     def __parseBlock(self, ctx):
-        # print(ctx.getText())
         statementList = []
         blockStatements = []
 
@@ -63,10 +68,8 @@ class StatementSyntaxNode(ContextSyntaxNode):
 
         super().__init__(ctx, name=name, nodeType=nodeType, packageName=packageName, className=className)
         self.methodSignature = methodSignature
-        # if hasattr(ctx, 'statementExpression') and ctx.statementExpression != None:      
-            # statement = 
         if parseSelf:
             self.children = self.__parseStatement(ctx)
-        # else:
-        #     print(ctx.getText())
-        #     self.children = self.__parseStatement(ctx)
+        
+        if self.children == None:
+            self.children = []

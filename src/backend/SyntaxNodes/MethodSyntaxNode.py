@@ -29,8 +29,15 @@ class MethodSyntaxNode(ContextSyntaxNode):
         self.signature = self.name + '(' + ','.join(sigList) + ')'
 
         if parseBody:
+            block = None
+            if self.type == 'Constructor':
+                block = ctx.constructorBody
+            else:
+                block = ctx.methodBody().block()
             self.children = StatementSyntaxNode(
-                ctx.methodBody().block(), nodeType='MethodBody', name=None, 
+                block, nodeType='MethodBody', name=None, 
                 packageName=self.packageName, className=self.className, methodSignature=self.signature).children
+        if self.children == None:   
+            self.children = []
         
         

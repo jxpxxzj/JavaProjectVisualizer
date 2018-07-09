@@ -15,4 +15,12 @@ class FileVisitor(BaseVisitor):
             MethodSyntaxNode(ctx, packageName=self.packageName, className=self.className, parseBody=True))
         
         return super().visitMethodDeclaration(ctx)
+    
+    def visitConstructorDeclaration(self, ctx):
+        print('Constructor {0}'.format(ctx.IDENTIFIER()))
+
+        self.getPackage(self.syntaxTree, self.packageTree)[self.className].append(
+            MethodSyntaxNode(ctx, nodeType='Constructor', packageName=self.packageName, className=self.className, parseBody=True))
+        
+        return super().visitConstructorDeclaration(ctx)
 
