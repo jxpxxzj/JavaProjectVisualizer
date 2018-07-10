@@ -395,6 +395,9 @@ export default {
                 
                 this.sourceBrowserTableValue = [
                     {
+                        'key': 'Line of codes',
+                        'value': currentMethod.stop - currentMethod.start + 1
+                    }, {
                         'key': "McCabe's Cyclomatic Complexity",
                         'value': metricsValue.cyclomaticComplexity
                     }

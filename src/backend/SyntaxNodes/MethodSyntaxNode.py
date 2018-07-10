@@ -34,8 +34,7 @@ class MethodSyntaxNode(ContextSyntaxNode):
                 block = ctx.constructorBody
             else:
                 block = ctx.methodBody().block()
-            self.children = StatementSyntaxNode(
-                block, nodeType='MethodBody', name=None, 
+            self.children = StatementSyntaxNode(block, nodeType='MethodBody', name=None, 
                 packageName=self.packageName, className=self.className, methodSignature=self.signature).children
         if self.children == None:   
             self.children = []

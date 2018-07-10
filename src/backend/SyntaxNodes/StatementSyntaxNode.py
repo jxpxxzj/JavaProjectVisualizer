@@ -3,19 +3,17 @@ from SyntaxNodes.ContextSyntaxNode import ContextSyntaxNode
 class StatementSyntaxNode(ContextSyntaxNode):
     def __parseMethodCall(self, ctx, nodeType='MethodCall'):
         name = ctx.IDENTIFIER().getText()
-        return StatementSyntaxNode(ctx, nodeType, name=name, packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)
-
-    def __parseAssign(self, ctx):
-        name = ctx.expression(0).getText()
-        from SyntaxNodes.AssignStatementSyntaxNode import AssignStatementSyntaxNode
-        return AssignStatementSyntaxNode(ctx, name=name, packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)
+        return StatementSyntaxNode(ctx, nodeType, 
+            name=name, packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)
 
     def __parseExpression(self, ctx, nodeType='MethodCall'):
         if ctx.methodCall() != None:
             return self.__parseMethodCall(ctx.methodCall(), nodeType)
 
         if len(ctx.expression()) == 2 and ctx.bop.text in ['=', '+=', '-=', '*=', '/=', '&=', '|=', '^=', '>>=', '>>>=', '<<=', '%=']: # assign statement            
-            return self.__parseAssign(ctx)
+            from SyntaxNodes.AssignStatementSyntaxNode import AssignStatementSyntaxNode
+            return AssignStatementSyntaxNode(ctx, 
+                packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)
 
     def __parseStatement(self, ctx):
         statement = None
@@ -31,23 +29,28 @@ class StatementSyntaxNode(ContextSyntaxNode):
         
         if hasattr(ctx, 'RETURN') and ctx.RETURN() != None: # is return      
             from SyntaxNodes.ReturnStatementSyntaxNode import ReturnStatementSyntaxNode
-            return [ReturnStatementSyntaxNode(ctx, packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)]
+            return [ReturnStatementSyntaxNode(ctx, 
+                packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)]
 
         if hasattr(ctx, 'IF') and ctx.IF() != None: # is if statement
             from SyntaxNodes.IfStatementSyntaxNode import IfStatementSyntaxNode
-            return [IfStatementSyntaxNode(ctx, packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)]
+            return [IfStatementSyntaxNode(ctx, 
+                packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)]
 
         if hasattr(ctx, 'DO') and ctx.DO() != None: # do..while statement
             from SyntaxNodes.DoWhileStatementSyntaxNode import DoWhileStatementSyntaxNode
-            return [DoWhileStatementSyntaxNode(ctx, packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)]
+            return [DoWhileStatementSyntaxNode(ctx, 
+                packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)]
 
         if hasattr(ctx, 'WHILE') and ctx.WHILE() != None: # while statement
             from SyntaxNodes.WhileStatementSyntaxNode import WhileStatementSyntaxNode
-            return [WhileStatementSyntaxNode(ctx, packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)]
+            return [WhileStatementSyntaxNode(ctx, 
+                packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)]
 
         if hasattr(ctx, 'FOR') and ctx.FOR() != None: # for statement
             from SyntaxNodes.ForStatementSyntaxNode import ForStatementSyntaxNode
-            return [ForStatementSyntaxNode(ctx, packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)]
+            return [ForStatementSyntaxNode(ctx, 
+                packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)]
 
     def __parseBlock(self, ctx):
         statementList = []
