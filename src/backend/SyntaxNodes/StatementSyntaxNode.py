@@ -1,14 +1,11 @@
 from SyntaxNodes.ContextSyntaxNode import ContextSyntaxNode
 
 class StatementSyntaxNode(ContextSyntaxNode):
-    def __parseMethodCall(self, ctx, nodeType='MethodCall'):
-        name = ctx.IDENTIFIER().getText()
-        return StatementSyntaxNode(ctx, nodeType, 
-            name=name, packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)
-
     def __parseExpression(self, ctx, nodeType='MethodCall'):
         if ctx.methodCall() != None:
-            return self.__parseMethodCall(ctx.methodCall(), nodeType)
+            from SyntaxNodes.MethodCallStatementSyntaxNode import MethodCallStatementSyntaxNode
+            return MethodCallStatementSyntaxNode(ctx.methodCall(),
+                packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)
 
         if len(ctx.expression()) == 2 and ctx.bop.text in ['=', '+=', '-=', '*=', '/=', '&=', '|=', '^=', '>>=', '>>>=', '<<=', '%=']: # assign statement            
             from SyntaxNodes.AssignStatementSyntaxNode import AssignStatementSyntaxNode

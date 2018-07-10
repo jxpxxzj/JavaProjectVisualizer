@@ -91,6 +91,16 @@
                                             <Tabs>
                                                 <TabPane label="Control Flow Graph">
                                                     <chart :options="flowGraph" style="width: 500px; height: 500px"></chart>
+                                                    <Modal
+                                                        cancel-text=""
+                                                        ok-text="Close"
+                                                        width="1200"
+                                                        v-model="graphFullscreen"
+                                                        title="Control Flow Graph"
+                                                        @on-cancel="toggleFullscreen">
+                                                        <chart :options="flowGraph" style="width: 1150px; height: 550px"></chart>
+                                                    </Modal>
+                                                    <Button type="primary" @click="toggleFullscreen">Fullscreen</Button>
                                                 </TabPane>
                                                 <TabPane label="Metrics Value">
                                                     <Table border :columns="sourceBrowserTableCols" :data="sourceBrowserTableValue"></Table>
@@ -365,7 +375,9 @@ export default {
                 ]  
             },
             flowGraph: {
-                tooltip: {},
+                tooltip: {
+                    formatter: '{b}<br>{c}'
+                },
                 animationDurationUpdate: 1500,
                 animationEasingUpdate: 'quinticInOut',
                 series : [
@@ -398,7 +410,7 @@ export default {
                             normal: {
                                 opacity: 0.9,
                                 width: 2,
-                                curveness: 0.2
+                                curveness: 0.05
                             }
                         }
                     }
@@ -414,10 +426,14 @@ export default {
             code: '',
             fullCode: '',
             fileKey: null,
-            fileTree: []
+            fileTree: [],
+            graphFullscreen: false
         }
     },
     methods: {
+        toggleFullscreen() {
+            this.graphFullscreen = !this.graphFullscreen;
+        },
         onBeforeUpload() {
             this.$Spin.show();
             return true;

@@ -206,7 +206,7 @@ function calcLinkList(syntaxTree, methodSignature) {
     return linkList
 }
 
-function getNode(statement, firstOrLast=false, fixed=false, name='') {
+function getNode(statement, firstOrLast=false, fixed=false, name='', value='') {
     var node = {
         itemStyle: {
             color: colorPad[0]
@@ -222,6 +222,7 @@ function getNode(statement, firstOrLast=false, fixed=false, name='') {
             node.y = 100
         }
         node.name = name
+        node.value = value
         return node
     }
 
@@ -255,8 +256,8 @@ function getNode(statement, firstOrLast=false, fixed=false, name='') {
             str = `${syntaxNode.left} ${syntaxNode.op} ${syntaxNode.right}`
         }
 
-        if (syntaxNode.type == 'MethodCall') {
-            str = `${syntaxNode.name}(${syntaxNode.expressionList})`
+        if (syntaxNode.type == 'MethodCallStatement') {
+            str = `${syntaxNode.name}(${syntaxNode.expressionList == null ? '' : syntaxNode.expressionList})`
         }
 
         if (syntaxNode.type == 'ReturnStatement') {
@@ -267,6 +268,7 @@ function getNode(statement, firstOrLast=false, fixed=false, name='') {
     }
 
     node.name = getNodeLabel(statement.node)
+    node.value = `${statement.node.type} @ ${statement.node.start} ~ ${statement.node.stop}`
 
     return node
 }
@@ -279,6 +281,10 @@ function getLink(linkList, statements, endIndex) {
     })
     for(var i=0;i<linkList.length;i++) {
         if (statements[i].node.type == 'ReturnStatement') {
+            links.push({
+                source: i+1,
+                target: endIndex
+            })
             continue;
         }
         if (linkList[i].length == 0) {
@@ -320,8 +326,11 @@ function getLink(linkList, statements, endIndex) {
 function getFlow(syntaxTree, methodSignature) {
     var linkList = calcLinkList(syntaxTree, methodSignature)
     var statements = getStatementList(syntaxTree, methodSignature)
-    var i = 0;
-    var statementsNodes = [getNode(undefined, true, true, methodSignature)]
+
+    var methods = syntaxTree.children[0].children[0].children
+    var method = methods.find(t => t.signature == methodSignature)
+
+    var statementsNodes = [getNode(undefined, true, true, methodSignature, `Method @ ${method.start} ~ ${method.stop}`)]
     statementsNodes = statementsNodes.concat(statements.map(t => getNode(t)))
     statementsNodes.push(getNode(undefined, true, false, 'End')) 
     var links = getLink(linkList, statements, statementsNodes.length-1)
