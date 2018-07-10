@@ -27,31 +27,31 @@
                         <iCol :span="19">
                             <div v-show='activeMenu == "1"' class='menu-page' style="margin-bottom: 20px">
                                 <Tabs value="package" style="height: 100%">
-                                    <TabPane :label="`Package (${treeResolverValue.Package.length})`" name="package">
+                                    <TabPane v-if="treeResolverValue.Package != undefined" :label="`Package (${treeResolverValue.Package.length})`" name="package">
                                         <Table border height="550" :columns="tableCols.package" :data="treeResolverValue.Package"></Table>
                                     </TabPane>
-                                    <TabPane :label="`Class (${treeResolverValue.Class.length})`" name="class">
+                                    <TabPane v-if="treeResolverValue.Class != undefined" :label="`Class (${treeResolverValue.Class.length})`" name="class">
                                         <Table border height="550" :columns="tableCols.class" :data="treeResolverValue.Class"></Table>
                                     </TabPane>
-                                    <TabPane :label="`Constructor (${treeResolverValue.Constructor.length})`" name="constructor">
+                                    <TabPane v-if="treeResolverValue.Constructor != undefined" :label="`Constructor (${treeResolverValue.Constructor.length})`" name="constructor">
                                         <Table border height="550" :columns="tableCols.constructor" :data="treeResolverValue.Constructor"></Table>
                                     </TabPane>
-                                    <TabPane :label="`Method (${treeResolverValue.Method.length})`" name="method">
+                                    <TabPane v-if="treeResolverValue.Method != undefined" :label="`Method (${treeResolverValue.Method.length})`" name="method">
                                         <Table border height="550" :columns="tableCols.method" :data="treeResolverValue.Method"></Table>
                                     </TabPane>
-                                    <TabPane :label="`Field (${treeResolverValue.Field.length})`" name="field">
+                                    <TabPane v-if="treeResolverValue.Field != undefined" :label="`Field (${treeResolverValue.Field.length})`" name="field">
                                         <Table border height="550" :columns="tableCols.field" :data="treeResolverValue.Field"></Table>
                                     </TabPane>
-                                    <TabPane :label="`Interface (${treeResolverValue.Interface.length})`" name="interface">
+                                    <TabPane v-if="treeResolverValue.Interface != undefined" :label="`Interface (${treeResolverValue.Interface.length})`" name="interface">
                                         <Table border height="550" :columns="tableCols.interface" :data="treeResolverValue.Interface"></Table>
                                     </TabPane>
-                                    <TabPane :label="`Interface Method (${treeResolverValue.InterfaceMethod.length})`" name="interfaceMethod">
+                                    <TabPane v-if="treeResolverValue.InterfaceMethod != undefined" :label="`Interface Method (${treeResolverValue.InterfaceMethod.length})`" name="interfaceMethod">
                                         <Table border height="550" :columns="tableCols.interfaceMethod" :data="treeResolverValue.InterfaceMethod"></Table>
                                     </TabPane>
-                                    <TabPane :label="`Annotation (${treeResolverValue.Annotation.length})`" name="annotation">
+                                    <TabPane v-if="treeResolverValue.Annotation != undefined" :label="`Annotation (${treeResolverValue.Annotation.length})`" name="annotation">
                                         <Table border height="550" :columns="tableCols.annotation" :data="treeResolverValue.Annotation"></Table>
                                     </TabPane>
-                                    <TabPane :label="`Annotation Method (${treeResolverValue.AnnotationTypeElement.length})`" name="annotationTypeElement">
+                                    <TabPane v-if="treeResolverValue.AnnotationTypeElement != undefined" :label="`Annotation Method (${treeResolverValue.AnnotationTypeElement.length})`" name="annotationTypeElement">
                                         <Table border height="550" :columns="tableCols.annotationTypeElement" :data="treeResolverValue.AnnotationTypeElement"></Table>
                                     </TabPane>
                                 </Tabs>
@@ -75,7 +75,7 @@
                             <Row>
                                 <Select v-model="memberSelected" @on-change="onSelectChange">
                                     <Option value="sourceCode">Source Code</Option>
-                                    <Option v-for="(item,index) in fileSyntaxTree.Method" :value="item.signature" :key="index">{{ item.signature }}</Option>
+                                    <Option v-for="(item,index) in fileSyntaxTreeResolverValue.Method" :value="item.signature" :key="index">{{ item.signature }}</Option>
                                 </Select>
                             </Row>
                             <Row :gutter="20">
@@ -90,7 +90,7 @@
                                         <div style="margin-top: 12px;">
                                             <Tabs>
                                                 <TabPane label="Control Flow Graph">
-                                                    Graph
+                                                    <chart :options="flowGraph" style="width: 500px; height: 500px"></chart>
                                                 </TabPane>
                                                 <TabPane label="Metrics Value">
                                                     <Table border :columns="sourceBrowserTableCols" :data="sourceBrowserTableValue"></Table>
@@ -138,6 +138,7 @@ td.hljs-ln-code {
 </style>
 <script>
 import { travelTree, calcCodeMetricsValue } from './syntaxTreeResolver'
+import { getFlow } from './controlFlowGraph'
 
 function colorMappingChange(value) {
     var levelOption = getLevelOption(value);
@@ -363,8 +364,51 @@ export default {
                     }
                 ]  
             },
+            flowGraph: {
+                tooltip: {},
+                animationDurationUpdate: 1500,
+                animationEasingUpdate: 'quinticInOut',
+                series : [
+                    {
+                        type: 'graph',
+                        symbolSize: 50,
+                        roam: true,
+                        label: {
+                            normal: {
+                                show: true
+                            }
+                        },
+                        edgeSymbol: ['circle', 'arrow'],
+                        edgeSymbolSize: [4, 10],
+                        edgeLabel: {
+                            normal: {
+                                textStyle: {
+                                    fontSize: 20
+                                }
+                            }
+                        },
+                        layout: 'force',
+                        force: {
+                            repulsion: 2000,
+                            gravity: 0.01,
+                        },
+                        data: [],
+                        links: [],
+                        lineStyle: {
+                            normal: {
+                                opacity: 0.9,
+                                width: 2,
+                                curveness: 0.2
+                            }
+                        }
+                    }
+                ]
+            },
             memberSelected: 'sourceCode',
             fileSyntaxTree: {
+                children: []
+            },
+            fileSyntaxTreeResolverValue: {
                 Method: []
             },
             code: '',
@@ -385,10 +429,13 @@ export default {
             if (value == 'sourceCode') {
                 this.code = this.fullCode;
             } else {
-                var currentMethod = this.fileSyntaxTree.Method.find(t => t.signature == value);
+                var currentMethod = this.fileSyntaxTreeResolverValue.Method.find(t => t.signature == value);
                 var codeList = this.fullCode.split('\n').slice(currentMethod.start-1, currentMethod.stop)
                 var mIndent = codeList[0].length - codeList[0].trimLeft().length
                 var finalCode = codeList.map(t => t.slice(mIndent)).join('\n')
+                var flow = getFlow(this.fileSyntaxTree, value)
+                this.flowGraph.series[0].data = flow.data
+                this.flowGraph.series[0].links = flow.links
 
                 var metricsValue = calcCodeMetricsValue(currentMethod.methodBody);
                 
@@ -424,8 +471,9 @@ export default {
                 const result = this.$axios.get('/api/getFile/' + this.fileKey + '/' + item[0].path)
                 .then(response => {
                     this.browserSpinShow = false;
-                    this.fileSyntaxTree = travelTree(response.data.syntaxTree)
-                    console.log(this.fileSyntaxTree)
+                    this.fileSyntaxTree = response.data.syntaxTree
+                    this.fileSyntaxTreeResolverValue = travelTree(response.data.syntaxTree)
+                    console.log(this.fileSyntaxTreeResolverValue)
                     this.fullCode = response.data.content
                     this.memberSelected = 'sourceCode';
                     this.onSelectChange(this.memberSelected);

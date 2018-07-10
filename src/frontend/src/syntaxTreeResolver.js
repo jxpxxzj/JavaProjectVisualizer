@@ -16,6 +16,7 @@ function travelTree(sytnaxTree) {
         var elem = new elemBase();
         elem.start = tree.start
         elem.stop = tree.stop
+        elem.nodeType = tree.type
 
         var str = tree.name;
         if (tree.type == 'Annotation') {
