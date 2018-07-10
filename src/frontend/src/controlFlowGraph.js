@@ -331,12 +331,27 @@ function getFlow(syntaxTree, methodSignature) {
     var statementsNodes = [getNode(undefined, true, true, methodSignature, `Method @ ${method.start} ~ ${method.stop}`)]
     statementsNodes = statementsNodes.concat(statements.map(t => getNode(t)))
     statementsNodes.push(getNode(undefined, true, false, 'End')) 
+
+    function processDuplicateName(statementsNodes) {
+        var dict = {}
+        for(var i=0;i<statementsNodes.length;i++) {
+            var node = statementsNodes[i]
+            if (dict[node.name] != undefined) {
+                node.name += `~${dict[node.name]}`
+                dict[node.name]++
+            } else {
+                dict[node.name] = 0
+            }
+        }
+    }
+
+    processDuplicateName(statementsNodes)
+
     var links = getLink(linkList, statements, statementsNodes.length-1)
     return {
         data: statementsNodes,
         links
     }
-
 }
 
 export {

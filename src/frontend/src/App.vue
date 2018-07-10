@@ -92,7 +92,7 @@
                                                 <TabPane label="Control Flow Graph">
                                                     <chart :options="flowGraph" style="width: 500px; height: 500px"></chart>
                                                     <Modal v-model="graphFullscreen" title="Control Flow Graph" :mask-closable="false" 
-                                                        cancel-text="" ok-text="Close" width="1200" @on-cancel="toggleFullscreen">                                                                     
+                                                        cancel-text="" ok-text="Close" width="1200" @on-ok="toggleFullscreen" @on-cancel="toggleFullscreen">                                                                     
                                                         <chart :options="flowGraph" style="width: 1150px; height: 550px"></chart>
                                                     </Modal>
                                                     <Button type="primary" @click="toggleFullscreen">Fullscreen</Button>
@@ -475,7 +475,7 @@ export default {
                     setTimeout(timeoutFunc, 100)    
                 }
             }
-            
+
             this.$nextTick(function() {
                 timeoutFunc()
             })
