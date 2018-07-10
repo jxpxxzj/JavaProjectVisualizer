@@ -13,6 +13,11 @@ def CreateApp():
         sys.path.insert(0, project_path)
 
     app = Flask(__name__)
+
+    @app.route('/<path:path>')
+    def static_file(path):
+        return app.send_static_file(path)
+
     app.debug = False
     app.json_encoder = NodeEncoder
 

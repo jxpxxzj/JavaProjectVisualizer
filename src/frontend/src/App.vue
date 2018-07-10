@@ -382,7 +382,6 @@ export default {
             this.activeMenu = name
         },
         onSelectChange(value) {
-            console.log(value)
             if (value == 'sourceCode') {
                 this.code = this.fullCode;
             } else {

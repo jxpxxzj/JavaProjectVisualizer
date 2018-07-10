@@ -11,5 +11,6 @@ class VariableDeclaratorSyntaxNode(StatementSyntaxNode):
     def __init__(self, ctx, valueType, packageName=None, className=None, methodSignature=None):
         super().__init__(ctx, nodeType='VariableDeclarator', 
             packageName=packageName, className=className, methodSignature=methodSignature, parseSelf=False)
-        self.name, self.value = self.__parseVariableDeclarator(ctx)
+        self.left, self.right = self.__parseVariableDeclarator(ctx)
+        self.name = self.left
         self.valueType = valueType

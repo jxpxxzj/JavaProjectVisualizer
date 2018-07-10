@@ -194,6 +194,7 @@ yarn-error.log
 /tmp
 /src/backend/upload/*
 !/src/backend/upload/.gitkeep
+!/src/backend/Server/static/dist
 .vscode/
 .antlr
 package-lock.json
