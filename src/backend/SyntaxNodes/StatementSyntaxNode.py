@@ -14,6 +14,16 @@ class StatementSyntaxNode(ContextSyntaxNode):
             from SyntaxNodes.AssignStatementSyntaxNode import AssignStatementSyntaxNode
             return AssignStatementSyntaxNode(ctx, 
                 packageName=self.packageName, className=self.className, methodSignature=self.methodSignature)
+    
+    def __parseVariableDeclaration(self, ctx):
+        valueType = ctx.typeType().getText()
+        declaratorsList = []
+        from SyntaxNodes.VariableDeclaratorSyntaxNode import VariableDeclaratorSyntaxNode
+        for x in ctx.variableDeclarators().variableDeclarator():
+            declaratorsList.append(VariableDeclaratorSyntaxNode(x, valueType=valueType,
+                packageName=self.packageName, className=self.className, methodSignature=self.methodSignature))
+        
+        return declaratorsList
 
     def __parseStatement(self, ctx):
         statement = None
@@ -64,9 +74,12 @@ class StatementSyntaxNode(ContextSyntaxNode):
         for x in blockStatements:
             if x.statement() != None: # is statement
                 statement = self.__parseStatement(x.statement())
-                if statement != None:
-                    statementList += statement
-        
+            if x.localVariableDeclaration() != None: # is declaration
+                statement = self.__parseVariableDeclaration(x.localVariableDeclaration())
+
+            if statement != None:
+                statementList += statement
+
         return statementList
 
     def __init__(self, ctx, nodeType, name=None, packageName=None, className=None, methodSignature=None, parseSelf=True):
