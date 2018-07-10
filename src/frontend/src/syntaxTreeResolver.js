@@ -75,14 +75,20 @@ function travelTree(sytnaxTree) {
 
 function calcCodeMetricsValue(methodBody) {
     var obj = {
-        cyclomaticComplexity: 1
+        cyclomaticComplexity: 1,
+        classCoupling: 0
     }
+
+    var valueTypeList = {}
 
     function countInstances(string, word) {
         return string.split(word).length - 1;
      }
 
     function travel(tree) {
+        if (tree.valueType != undefined) {
+            valueTypeList[tree.valueType] = true
+        }
         if (tree.condition != undefined) { // is do..while / while / if
             obj.cyclomaticComplexity++;
             obj.cyclomaticComplexity += countInstances(tree.condition, '&&')
@@ -96,6 +102,8 @@ function calcCodeMetricsValue(methodBody) {
     methodBody.forEach(element => {
         travel(element)
     });
+
+    obj.classCoupling = Object.keys(valueTypeList).length
 
     return obj;
 }

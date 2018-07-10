@@ -71,7 +71,7 @@
                         <iCol :span="6">
                             <Tree :data="fileTree" @on-select-change="onTreeSelectChange"></Tree>
                         </iCol>
-                        <iCol :span="18">
+                        <iCol :span="18" v-if="code != ''">
                             <Row>
                                 <Select v-model="memberSelected" @on-change="onSelectChange">
                                     <Option value="sourceCode">Source Code</Option>
@@ -91,13 +91,8 @@
                                             <Tabs>
                                                 <TabPane label="Control Flow Graph">
                                                     <chart :options="flowGraph" style="width: 500px; height: 500px"></chart>
-                                                    <Modal
-                                                        cancel-text=""
-                                                        ok-text="Close"
-                                                        width="1200"
-                                                        v-model="graphFullscreen"
-                                                        title="Control Flow Graph"
-                                                        @on-cancel="toggleFullscreen">
+                                                    <Modal v-model="graphFullscreen" title="Control Flow Graph" :mask-closable="false" 
+                                                        cancel-text="" ok-text="Close" width="1200" @on-cancel="toggleFullscreen">                                                                     
                                                         <chart :options="flowGraph" style="width: 1150px; height: 550px"></chart>
                                                     </Modal>
                                                     <Button type="primary" @click="toggleFullscreen">Fullscreen</Button>
@@ -462,15 +457,32 @@ export default {
                     }, {
                         'key': "McCabe's Cyclomatic Complexity",
                         'value': metricsValue.cyclomaticComplexity
+                    }, {
+                        'key': 'Class Coupling',
+                        'value': metricsValue.classCoupling
                     }
                 ]
                 
                 this.code = finalCode;
             }
-            hljs.initLineNumbersOnLoad();
+
+            var timeoutFunc = function() {
+                if (window.hljs.initLineNumbersOnLoad != undefined) {
+                    window.hljs.initLineNumbersOnLoad();
+                }
+                var codeElement = document.querySelector('code').innerHTML;
+                if (!codeElement.includes('<table>')) {
+                    setTimeout(timeoutFunc, 100)    
+                }
+            }
+            
+            this.$nextTick(function() {
+                timeoutFunc()
+            })
         },
         onUploadSuccess(response, file, fileList) {
             this.$Spin.hide();
+            this.code = ''
             this.fileKey = response.fileKey;
             this.fileTree = [response.fileTree];
             this.syntaxTree = response.syntaxTree
@@ -489,7 +501,6 @@ export default {
                     this.browserSpinShow = false;
                     this.fileSyntaxTree = response.data.syntaxTree
                     this.fileSyntaxTreeResolverValue = travelTree(response.data.syntaxTree)
-                    console.log(this.fileSyntaxTreeResolverValue)
                     this.fullCode = response.data.content
                     this.memberSelected = 'sourceCode';
                     this.onSelectChange(this.memberSelected);
