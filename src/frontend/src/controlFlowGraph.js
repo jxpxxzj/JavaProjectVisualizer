@@ -53,13 +53,7 @@ function getStatementList(syntaxTree, methodSignature) {
             }
         }
         
-        if (tree.type == 'ForStatement' || tree.type == 'WhileStatement') { // should return to branch root
-            for(let i=0; i<children.length; i++) {
-                travel(children[i])
-            }
-        }
-
-        if (tree.type == 'DoWhileStatement') { // loop and return
+        if (tree.type == 'ForStatement' || tree.type == 'WhileStatement' || tree.type == 'DoWhileStatement') { // loop statements
             for(let i=0; i<children.length; i++) {
                 travel(children[i])
             }
@@ -67,7 +61,7 @@ function getStatementList(syntaxTree, methodSignature) {
 
         return obj
     }
-                  // file    // package  // class    // methods
+    //            file       package     class       methods
     var methods = syntaxTree.children[0].children[0].children
     var method = methods.find(t => t.signature == methodSignature)
     method.children.forEach(element => {
@@ -138,8 +132,6 @@ function calcLinkList(syntaxTree, methodSignature) {
             return findStatement(result)
         }
     }
-
-   
     
     function getNextStatement(statement) {
         var next = []
@@ -153,6 +145,10 @@ function calcLinkList(syntaxTree, methodSignature) {
                 next.push(findStatement(falseBranch.children[0])) // push first statement of false branch
                 // return next // do not continue since only two next is allowed
             } // else: just simply skip this if statement
+        }
+
+        if (statement.node.type == 'DoWhileStatement') { 
+            next.push(findStatement(statement.node.children[0])) // goto the first statement of do..while
         }
 
         if (statement.node.type == 'ForStatement' || statement.node.type == 'WhileStatement') {
@@ -175,7 +171,9 @@ function calcLinkList(syntaxTree, methodSignature) {
                 }
 
                 if (index == parentChildren.length - 1) { // is the last statement of this block
-                    if (parent.node.type == 'ForStatement' || parent.node.type == 'WhileStatement') { // for statement and while statement should return to its start
+                    if (parent.node.type == 'DoWhileStatement') {
+                        next = [findStatement(parent.node)]
+                    } else if (parent.node.type == 'ForStatement' || parent.node.type == 'WhileStatement') { // for statement and while statement should return to its start
                         next.push(parent) // return to parent's parameter
                     } else if (parent.node.type == 'IfStatement') {
                         var nextStatements = getNextStatement(parent)
@@ -185,10 +183,22 @@ function calcLinkList(syntaxTree, methodSignature) {
                     }
                 } else { // is in the mid of parents
                     next.push(findStatement(parentChildren[index + 1])); // return its next
+                    // handle do..while
+                    for(var i=0;i<next.length;i++) {
+                        if (next[i].node != undefined && next[i].node.type == 'DoWhileStatement') {
+                            next[i] = findStatement(next[i].node.children[0])
+                        }
+                    }
                 }
             } else { // method scope
                 var index = rootStatements.indexOf(statement)
                 next.push(rootStatements[index + 1]); // return next statement
+                // handle do..while
+                for(var i=0;i<next.length;i++) {
+                    if (next[i].node != undefined && next[i].node.type == 'DoWhileStatement') {
+                        next[i] = findStatement(next[i].node.children[0])
+                    }
+                }
             }
         } else {// else: there is no statements
             next.push(-1)
@@ -270,9 +280,17 @@ function getNode(statement, firstOrLast=false, name='', value='') {
 
 function getLink(linkList, statements, endIndex) {
     var links = []
+    var initTargetId = 1
+    for(var i=0;i<statements.length;i++) {
+        if (statements[i].node.type == 'DoWhileStatement') {
+            initTargetId++;
+        } else {
+            break;
+        }
+    }
     links.push({
         source: 0,
-        target: 1
+        target: initTargetId
     })
     for(var i=0;i<linkList.length;i++) {
         if (statements[i].node.type == 'ReturnStatement') {
