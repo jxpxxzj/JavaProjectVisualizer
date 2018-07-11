@@ -71,7 +71,7 @@ function getFlow(syntaxTree, methodSignature) {
             travel(element);
         });
     
-        return list.flat().sort((a,b) => a.id - b.id);
+        return list.sort((a,b) => a.id - b.id);
     }
 
     var statements = getStatementList()
@@ -212,7 +212,7 @@ function getFlow(syntaxTree, methodSignature) {
     
         var linkList = []
         statements.forEach(t => {
-            linkList.push(getNextStatement(t).flat());
+            linkList.push(getNextStatement(t));
         })
         linkList = linkList.map(t => t.map(u => u.id+1).slice(0, 2))
         

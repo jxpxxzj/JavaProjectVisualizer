@@ -7,12 +7,6 @@ import ECharts from 'vue-echarts/components/ECharts'
 import 'echarts'
 import 'iview/dist/styles/iview.css'
 
-var flat = require('array.prototype.flat');
-// if (!Array.prototype.flat) {
-    Array.prototype.flat = flat;
-// }
-// Array.prototype.flatShim = flat;
-
 Vue.prototype.$axios = Axios.create()
 
 Vue.use(iView);
