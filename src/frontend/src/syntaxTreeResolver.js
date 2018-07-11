@@ -109,11 +109,11 @@ function calcCodeMetricsValue(methodBody) {
 }
 
 function toViewTree(syntaxTree, methodSignature) {
+    // create a deep copy of syntaxTree
     var newTree = JSON.parse(JSON.stringify(syntaxTree))
 
     var methods = newTree.children[0].children[0].children
     var method = methods.find(t => t.signature == methodSignature)
-    console.log(method)
 
     function travel(tree) {
         tree.title = `${tree.name == undefined || tree.type == tree.name ? '' : ':' + tree.name} @ ${tree.start == tree.stop ? tree.start : tree.start + ' ~ ' + tree.stop}`

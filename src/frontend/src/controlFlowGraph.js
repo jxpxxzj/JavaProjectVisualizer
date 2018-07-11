@@ -354,7 +354,7 @@ function getFlow(syntaxTree, methodSignature) {
     var methods = syntaxTree.children[0].children[0].children
     var method = methods.find(t => t.signature == methodSignature)
 
-    var statementsNodes = [getNode(undefined, true, methodSignature, `Method @ ${method.start} ~ ${method.stop}`)]
+    var statementsNodes = [getNode(undefined, true, methodSignature, `${method.type} @ ${method.start} ~ ${method.stop}`)]
     statementsNodes = statementsNodes.concat(statements.map(t => getNode(t)))
     statementsNodes.push(getNode(undefined, true, 'End')) 
 

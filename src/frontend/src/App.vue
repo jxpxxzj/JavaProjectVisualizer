@@ -453,7 +453,6 @@ export default {
                 this.flowGraph.series[0].data = flow.data
                 this.flowGraph.series[0].links = flow.links
                 this.sourceBrowserViewTree = [toViewTree(this.fileSyntaxTree, value)]
-                console.log(this.sourceBrowserViewTree)
 
                 var metricsValue = calcCodeMetricsValue(currentMethod.methodBody);
                 
@@ -514,6 +513,10 @@ export default {
                     this.browserSpinShow = false;
                     this.fileSyntaxTree = response.data.syntaxTree
                     this.fileSyntaxTreeResolverValue = travelTree(response.data.syntaxTree)
+                    if (this.fileSyntaxTreeResolverValue.Constructor != undefined) {
+                        // concat Constructor to Method
+                        this.fileSyntaxTreeResolverValue.Method = this.fileSyntaxTreeResolverValue.Constructor.concat(this.fileSyntaxTreeResolverValue.Method)
+                    }
                     this.fullCode = response.data.content
                     this.memberSelected = 'sourceCode';
                     this.onSelectChange(this.memberSelected);
