@@ -273,7 +273,7 @@ function getNode(statement, firstOrLast=false, name='', value='') {
     }
 
     node.name = getNodeLabel(statement.node)
-    node.value = `${statement.node.type} @ ${statement.node.start} ~ ${statement.node.stop}`
+    node.value = `${statement.node.type} @ ${statement.node.start == statement.node.stop ? statement.node.start : statement.node.start + ' ~ ' + statement.node.stop}`
 
     return node
 }
