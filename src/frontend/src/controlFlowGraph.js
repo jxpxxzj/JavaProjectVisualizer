@@ -190,7 +190,9 @@ function calcLinkList(syntaxTree, methodSignature) {
                 var index = rootStatements.indexOf(statement)
                 next.push(rootStatements[index + 1]); // return next statement
             }
-        } // else: there is no statements
+        } else {// else: there is no statements
+            next.push(-1)
+        }
 
         return next
     }
@@ -285,6 +287,7 @@ function getLink(linkList, statements, endIndex) {
             })
             continue;
         }
+
         if (linkList[i].length == 0) {
             links.push({
                 source: i+1,
@@ -293,9 +296,14 @@ function getLink(linkList, statements, endIndex) {
         }
 
         if (linkList[i].length == 1) {
+            var isEnd = isNaN(linkList[i][0])
+            var value = linkList[i][0]
+            if (isEnd) {
+                value = endIndex
+            }
             links.push({
                 source: i+1,
-                target: linkList[i][0]
+                target: value
             })
         }
 
@@ -308,9 +316,14 @@ function getLink(linkList, statements, endIndex) {
                     formatter: 'True'
                 }
             })
+            var isEnd = isNaN(linkList[i][1])
+            var value = linkList[i][1]
+            if (isEnd) {
+                value = endIndex
+            }
             links.push({
                 source: i+1,
-                target: linkList[i][1],
+                target: value,
                 label: {
                     show: true,
                     formatter: 'False'

@@ -72,7 +72,7 @@
                             <Tree :data="fileTree" @on-select-change="onTreeSelectChange"></Tree>
                         </iCol>
                         <iCol :span="18" v-if="code != ''">
-                            <Row>
+                            <Row v-if="fileSyntaxTreeResolverValue.Method != undefined && fileSyntaxTreeResolverValue.Method.length > 0">
                                 <Select v-model="memberSelected" @on-change="onSelectChange">
                                     <Option value="sourceCode">Source Code</Option>
                                     <Option v-for="(item,index) in fileSyntaxTreeResolverValue.Method" :value="item.signature" :key="index">{{ item.signature }}</Option>
@@ -437,6 +437,7 @@ export default {
             this.activeMenu = name
         },
         onSelectChange(value) {
+            this.graphFullscreen = false
             if (value == 'sourceCode') {
                 this.code = this.fullCode;
             } else {
@@ -465,15 +466,21 @@ export default {
                 
                 this.code = finalCode;
             }
-
+            var that = this;
             var timeoutFunc = function() {
                 if (window.hljs.initLineNumbersOnLoad != undefined) {
-                    window.hljs.initLineNumbersOnLoad();
+                    that.$nextTick(function() {
+                        window.hljs.initLineNumbersOnLoad();
+                    })
                 }
-                var codeElement = document.querySelector('code').innerHTML;
-                if (!codeElement.includes('<table>')) {
-                    setTimeout(timeoutFunc, 100)    
+                var codeElement = document.querySelector('code');
+                if (codeElement) {
+                    var html = codeElement.innerHTML
+                    if (!html.includes('<table>')) {
+                        setTimeout(timeoutFunc, 100)    
+                    }
                 }
+                
             }
 
             this.$nextTick(function() {
