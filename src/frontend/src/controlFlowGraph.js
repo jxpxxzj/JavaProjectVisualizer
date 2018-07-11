@@ -206,7 +206,7 @@ function calcLinkList(syntaxTree, methodSignature) {
     return linkList
 }
 
-function getNode(statement, firstOrLast=false, fixed=false, name='', value='') {
+function getNode(statement, firstOrLast=false, name='', value='') {
     var node = {
         itemStyle: {
             color: colorPad[0]
@@ -216,11 +216,6 @@ function getNode(statement, firstOrLast=false, fixed=false, name='', value='') {
     if (firstOrLast) {
         node.itemStyle.color = colorDict['entry']
         node.symbol = symbolDict['entry']
-        node.fixed = fixed
-        if (fixed) {
-            node.x = 100
-            node.y = 100
-        }
         node.name = name
         node.value = value
         return node
@@ -341,9 +336,9 @@ function getFlow(syntaxTree, methodSignature) {
     var methods = syntaxTree.children[0].children[0].children
     var method = methods.find(t => t.signature == methodSignature)
 
-    var statementsNodes = [getNode(undefined, true, true, methodSignature, `Method @ ${method.start} ~ ${method.stop}`)]
+    var statementsNodes = [getNode(undefined, true, methodSignature, `Method @ ${method.start} ~ ${method.stop}`)]
     statementsNodes = statementsNodes.concat(statements.map(t => getNode(t)))
-    statementsNodes.push(getNode(undefined, true, false, 'End')) 
+    statementsNodes.push(getNode(undefined, true, 'End')) 
 
     function processDuplicateName(statementsNodes) {
         var dict = {}

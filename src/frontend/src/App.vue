@@ -89,6 +89,9 @@
                                     <iCol :span="12">
                                         <div style="margin-top: 12px;">
                                             <Tabs>
+                                                <TabPane label="Syntax Tree">
+                                                    <Tree :data="sourceBrowserViewTree"></Tree>
+                                                </TabPane>
                                                 <TabPane label="Control Flow Graph">
                                                     <chart :options="flowGraph" style="width: 500px; height: 500px"></chart>
                                                     <Modal v-model="graphFullscreen" title="Control Flow Graph" :mask-closable="false" 
@@ -142,7 +145,7 @@ td.hljs-ln-code {
 
 </style>
 <script>
-import { travelTree, calcCodeMetricsValue } from './syntaxTreeResolver'
+import { travelTree, calcCodeMetricsValue, toViewTree } from './syntaxTreeResolver'
 import { getFlow } from './controlFlowGraph'
 
 function colorMappingChange(value) {
@@ -287,6 +290,7 @@ export default {
             },
             sourceBrowserTableCols: colMV,
             sourceBrowserTableValue: [],
+            sourceBrowserViewTree: [],
             activeMenu: '1',
             syntaxTree: {
                 children: []
@@ -448,6 +452,8 @@ export default {
                 var flow = getFlow(this.fileSyntaxTree, value)
                 this.flowGraph.series[0].data = flow.data
                 this.flowGraph.series[0].links = flow.links
+                this.sourceBrowserViewTree = [toViewTree(this.fileSyntaxTree, value)]
+                console.log(this.sourceBrowserViewTree)
 
                 var metricsValue = calcCodeMetricsValue(currentMethod.methodBody);
                 

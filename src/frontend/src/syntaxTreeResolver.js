@@ -108,7 +108,42 @@ function calcCodeMetricsValue(methodBody) {
     return obj;
 }
 
+function toViewTree(syntaxTree, methodSignature) {
+    var newTree = JSON.parse(JSON.stringify(syntaxTree))
+
+    var methods = newTree.children[0].children[0].children
+    var method = methods.find(t => t.signature == methodSignature)
+    console.log(method)
+
+    function travel(tree) {
+        tree.title = `${tree.name == undefined || tree.type == tree.name ? '' : ':' + tree.name} @ ${tree.start == tree.stop ? tree.start : tree.start + ' ~ ' + tree.stop}`
+        tree.expand = false
+        tree.render = function(h, {root, node, data}) {
+            return h('span', {
+                style: {
+                    display: 'inline-block',
+                    width: '100%'
+                }
+            }, [
+                    h(('span'), {
+                        style: {
+                            fontWeight: 'bold'
+                        }
+                    }, data.type),
+                    h(('span'), data.title)
+            ]);
+        }
+        tree.children.forEach(element => {
+            travel(element)
+        });
+    }
+
+    travel(method)
+    return method
+}
+
 export {
     travelTree,
-    calcCodeMetricsValue
+    calcCodeMetricsValue,
+    toViewTree
 }
