@@ -57,7 +57,7 @@ class BaseVisitor(JavaParserVisitor):
 
     def visitInterfaceDeclaration(self, ctx):
         self.className = ctx.IDENTIFIER().getText()
-        print('Interface: {0}]'.format(self.className))
+        print('Interface: {0}'.format(self.className))
 
         self.getPackage(self.syntaxTree, self.packageTree).append(
             ContextSyntaxNode(ctx, self.className, nodeType='Interface', packageName=self.packageName))

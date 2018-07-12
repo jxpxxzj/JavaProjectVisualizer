@@ -354,8 +354,6 @@ function getFlow(syntaxTree, methodSignature) {
         var linkList = calcLinkList()
         var statements = getStatementList()
     
-        
-    
         var statementsNodes = [getNode(undefined, true, methodSignature, `${method.type} @ ${method.start} ~ ${method.stop}`)]
         statementsNodes = statementsNodes.concat(statements.map(t => getNode(t)))
         statementsNodes.push(getNode(undefined, true, 'End')) 
@@ -365,8 +363,8 @@ function getFlow(syntaxTree, methodSignature) {
         for(var i=0;i<statementsNodes.length;i++) {
             var node = statementsNodes[i]
             if (dict[node.name] != undefined) {
-                node.name += `~${dict[node.name]}`
                 dict[node.name]++
+                node.name += `~${dict[node.name]}`
             } else {
                 dict[node.name] = 0
             }

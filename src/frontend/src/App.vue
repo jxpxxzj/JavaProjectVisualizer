@@ -352,7 +352,7 @@ export default {
                         name:'Line of codes',
                         type:'treemap',
                         visibleMin: 500,
-                        zoomToNodeRatio: 0.36,
+                        zoomToNodeRatio: 0.381924,
                         label: {
                             show: true,
                             formatter: '{b}'
@@ -409,7 +409,7 @@ export default {
                             normal: {
                                 opacity: 0.9,
                                 width: 2,
-                                curveness: 0.05
+                                curveness: 0
                             }
                         }
                     }
