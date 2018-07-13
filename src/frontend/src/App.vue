@@ -346,13 +346,14 @@ export default {
                             'Line of codes: ' + value,
                         ].join('');
                     }
-                },
+                },  
                 series: [
                     {
                         name:'Line of codes',
                         type:'treemap',
                         visibleMin: 500,
                         zoomToNodeRatio: 0.381924,
+                        leafDepth: 2,
                         label: {
                             show: true,
                             formatter: '{b}'
@@ -409,7 +410,7 @@ export default {
                             normal: {
                                 opacity: 0.9,
                                 width: 2,
-                                curveness: 0
+                                curveness: 0.1
                             }
                         }
                     }
